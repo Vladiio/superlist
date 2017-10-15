@@ -24,14 +24,40 @@ class ItemModelTest(TestCase):
         
 
 
-class SmokeTest(TestCase):
+class HomePageTest(TestCase):
+
+    def setUp(self):
+        self.text = 'A new list item'
 
     def test_home_page_template(self):
         response = self.client.get('/')
         self.assertTemplateUsed(response, 'home.html')
 
     def test_can_save_a_post_request(self):
-        response = self.client.post('/', data={'item_text': 'A new list item'})
-        self.assertTemplateUsed(response, 'home.html')
-        self.assertIn('A new list item', response.content.decode())
+        response = self.client.post('/', data={'item_text': self.text})
+        
+        qs = Item.objects.all()
+        self.assertEqual(qs.count(), 1)
+        new_item = qs.first()
+        self.assertEqual(new_item.text, self.text)
+
+    def test_redirects_after_post(self):
+        response = self.client.post('/', data={'item_text': self.text})
+        self.assertEqual(response.status_code, 302)
+        self.assertEqual(response['location'], '/')
+
+    def test_only_saves_items_when_necessary(self):
+        self.client.get('/')
+        self.assertEqual(Item.objects.count(), 0)
+    
+    def test_displays_all_list_items(self):
+        items = ('itemey 1', 'itemey 2')
+        for item_text in items:
+            Item.objects.create(text=item_text)
+
+        response = self.client.get('/')
+
+        for item_text in items:
+            self.assertIn(item_text, response.content.decode())
+
 
