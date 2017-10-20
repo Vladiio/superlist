@@ -12,9 +12,7 @@ class ItemModelTest(TestCase):
         test_data = ('The first (ever) list item', 'Item the second')
 
         for text in test_data:
-            item = Item()
-            item.text = text
-            item.save()
+            Item.objects.create(text=text)
 
         saved_items = Item.objects.all()
         self.assertEqual(saved_items.count(), len(test_data))
