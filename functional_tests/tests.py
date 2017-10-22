@@ -1,5 +1,6 @@
-from django.test import LiveServerTestCase
+import pdb
 import time
+from django.test import LiveServerTestCase
 
 from selenium import webdriver
 from selenium.common.exceptions import WebDriverException
@@ -25,8 +26,9 @@ class NewVisitorTest(LiveServerTestCase):
                 table = self.browser.find_element_by_id('id_list_table')
                 rows = table.find_elements_by_tag_name('tr')
                 self.assertIn(row_text, [row.text for row in rows])
+                return
             except (AssertionError, WebDriverException) as e:
-               if time.time() - start_time < self.MAX_WAIT:
+               if time.time() - start_time > self.MAX_WAIT:
                    raise e
                time.sleep(0.5)
 
