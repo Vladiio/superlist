@@ -3,21 +3,26 @@ from django.urls import resolve
 from django.http import HttpRequest
 
 from lists.views import home_page
-from lists.models import Item
+from lists.models import Item, List
 
 
-class ItemModelTest(TestCase):
+class ListAndItemModelTest(TestCase):
 
-    def test_saving_and_retrieving_items(self):
+    def test_saving_and_retrieving_items(self): 
         test_data = ('The first (ever) list item', 'Item the second')
 
+        list_ = List.objects.create()
         for text in test_data:
-            Item.objects.create(text=text)
+            Item.objects.create(text=text, list=list_)
+
+        saved_list = List.objects.first()
+        self.assertEqual(saved_list, list_)
 
         saved_items = Item.objects.all()
         self.assertEqual(saved_items.count(), len(test_data))
 
         for index, text in enumerate(test_data): 
+            self.assertEqual(saved_items[index].list, list_)
             self.assertEqual(saved_items[index].text, text)
         
 
@@ -31,10 +36,6 @@ class HomePageTest(TestCase):
         response = self.client.get('/')
         self.assertTemplateUsed(response, 'home.html')
 
-    def test_only_saves_items_when_necessary(self):
-        self.client.get('/')
-        self.assertEqual(Item.objects.count(), 0)
-    
 
 class ListViewTest(TestCase):
 
@@ -43,9 +44,10 @@ class ListViewTest(TestCase):
         self.assertTemplateUsed(response, 'list.html')
 
     def test_display_all_items(self):
+        list_ = List.objects.create()
         items = ('itemey 1', 'itemey 2')
         for item_text in items:
-            Item.objects.create(text=item_text)
+            Item.objects.create(text=item_text, list=list_)
 
         response = self.client.get('/lists/the-only-list-in-the-world/')
 
