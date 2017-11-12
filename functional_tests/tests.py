@@ -1,4 +1,4 @@
-import pdb
+import os
 import time
 from django.contrib.staticfiles.testing import StaticLiveServerTestCase
 
@@ -11,6 +11,9 @@ class NewVisitorTest(StaticLiveServerTestCase):
 
     def setUp(self):
         self.browser = webdriver.Firefox()
+        staging_server = os.environ.get('STAGING_SERVER')
+        if staging_server:
+            self.live_server_url = 'http://{}'.format(staging_server)
         self.first_item_row = 'Buy peacock feathers'
         self.second_item_row = 'Use peacock feathers to make a fly'
         self.MAX_WAIT = 10
@@ -31,7 +34,7 @@ class NewVisitorTest(StaticLiveServerTestCase):
                    raise e
                time.sleep(0.5)
 
-    def can_start_a_list_for_one_user(self):
+    def test_can_start_a_list_for_one_user(self):
         # Edith goes to new to-do app and check out its homepage
         self.browser.get(self.live_server_url)
 
@@ -69,7 +72,7 @@ class NewVisitorTest(StaticLiveServerTestCase):
         # Satisfied, she goes back to sleep
 
     
-    def multiple_users_can_start_lists_at_different_urls(self):
+    def test_multiple_users_can_start_lists_at_different_urls(self):
         # Edith starts a new to-do list
         self.browser.get(self.live_server_url)
         inputbox = self.browser.find_element_by_id("id_new_item")
