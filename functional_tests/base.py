@@ -32,7 +32,16 @@ class FunctionalTest(StaticLiveServerTestCase):
                 self.assertIn(row_text, [row.text for row in rows])
                 return
             except (AssertionError, WebDriverException) as e:
-               if time.time() - start_time > self.MAX_WAIT:
-                   raise e
-               time.sleep(0.5)
+                if time.time() - start_time > self.MAX_WAIT:
+                    raise e
+                time.sleep(0.5)
 
+    def wait_for(self, func):
+        start_time = time.time()
+        while True:
+            try:
+                return func()
+            except (AssertionError, WebDriverException) as e:
+                if time.time() - start_time > self.MAX_WAIT:
+                    raise e
+                time.sleep(0.5)
