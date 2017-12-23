@@ -15,9 +15,7 @@ def view_list(request, list_id):
     if request.method == 'POST':
         item_form = ItemForm(data=request.POST)
         if item_form.is_valid():
-            item = item_form.save(commit=False)
-            item.list = list_
-            item.save()
+            item_form.save(list_)
             return redirect(list_)
 
     return render(request, 'list.html', {'list': list_, 'form': item_form})
@@ -28,9 +26,7 @@ def new_list(request):
 
     if item_form.is_valid():
         list_ = List.objects.create()
-        item = item_form.save(commit=False)
-        item.list = list_
-        item.save()
+        item_form.save(list_)
         return redirect(list_)
 
     return render(request, 'home.html', {'form': item_form})
