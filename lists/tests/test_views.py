@@ -1,3 +1,5 @@
+from unittest import skip
+
 from django.test import TestCase
 from django.utils.html import escape
 
@@ -25,28 +27,25 @@ class ListViewTest(TestCase):
                 data={'text': ''}
         )
 
+    def post_data(self, data, list_=None):
+        list_ = List.objects.create() if list_ is None else list_
+        return self.client.post(f'/lists/{list_.id}/', data=data)
+
     def test_uses_list_template(self):
         new_list = List.objects.create()
         response = self.client.get(f'/lists/{new_list.id}/')
         self.assertTemplateUsed(response, 'list.html')
 
     def test_displays_only_items_for_that_list(self):
-        item_list = (
-                ('itemey 1', 'itemey 2'),
-                ('other list item 1', 'other list item 2'),
-        )
+        item_list = ('other list item 1', 'other list item 2')
         for item in item_list:
             correct_list_ = List.objects.create()
-            Item.objects.create(text=item[0], list=correct_list_)
-            Item.objects.create(text=item[1], list=correct_list_)
+            Item.objects.create(text=item, list=correct_list_)
 
+        # get the last list
         response = self.client.get(f'/lists/{correct_list_.id}/')
-
-        # we use other list items instead of etemey 1 and 2 due to loop above
-        self.assertContains(response, item_list[1][0])
-        self.assertContains(response, item_list[1][1])
-        self.assertNotContains(response, item_list[0][0])
-        self.assertNotContains(response, item_list[0][1])
+        self.assertContains(response, item_list[1])
+        self.assertNotContains(response, item_list[0])
 
     def test_passes_correct_list_to_template(self):
         List.objects.create()
@@ -101,6 +100,18 @@ class ListViewTest(TestCase):
         response = self.client.get(f'/lists/{new_list.id}/')
         self.assertIsInstance(response.context['form'], ItemForm)
         self.assertContains(response, 'name="text"')
+
+    @skip
+    def test_duplicate_item_validation_errors_end_up_on_lists_page(self):
+        list_ = List.objects.create()
+        item_text = 'test'
+        item = Item.objects.create(list=list_, text=item_text)
+        response = self.post_data({'text': item_text}, list_=list_)
+
+        expected_error = escape("You've already got this in your list")
+        self.assertContains(response, expected_error)
+        self.assertTemplateUsed(response, 'list.html')
+        self.assertEqual(Item.objects.count(), 1)
 
 
 class NewListTest(TestCase):
