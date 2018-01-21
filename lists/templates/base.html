@@ -1,35 +1,45 @@
 {% load static %}
 <!DOCTYPE html>
 <html lang="en">
-    <head>
+
+<head>
     <meta charset="utf-8">
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
     <meta name="viewport" content="width=device-width, initial-scale=1">
     <!-- The above 3 meta tags *must* come first in the head; any other head content must come *after* these tags -->
     <title>To-Do lists</title>
-
     <!-- Bootstrap -->
     <link href="{% static 'bootstrap/css/bootstrap.min.css' %}" rel="stylesheet">
     <!-- Custom styles -->
     <link href="{% static 'styles/base.css' %}" rel="stylesheet">
-
 </head>
+
 <body>
     <div class="container">
+        
+        <div class="navbar">
+            {% if user.is_authenticated %}
+            <p>Logged in as {{ user.email }}</p>
+            <p><a id="id_logout" href="{% url 'logout' %}">Log out</a></p>
+            {% else %}
+            <form action="{% url 'send_login_email' %}" method="POST">
+              {% csrf_token %}
+              Enter email to log in: <input type="email" name="email"/>
+            </form>
+            {% endif %}
+        </div>
+
         <div class="row">
             <div class="col-md-6 col-md-offset-3 jumbotron">
                 <div class="text-center">
                     <h1>{% block header_text %}{% endblock  %}</h1>
                     <form method="POST" action="{% block form_action %}{% endblock %}">
-                        {% csrf_token %}
-                        {{ form.text }}
-                        {% if form.errors %}
+                        {% csrf_token %} {{ form.text }} {% if form.errors %}
                         <div class="form-group has-error">
-                            <span class="help-block"></span>
-                               {{ form.text.errors }}
+                            <span class="help-block"></span> {{ form.text.errors }}
                             </span>
                         </div>
-                      {% endif %}
+                        {% endif %}
                     </form>
                 </div>
             </div>
@@ -40,16 +50,14 @@
             </div>
         </div>
     </div>
-<script
-      src="https://code.jquery.com/jquery-3.2.1.min.js"
-      integrity="sha256-hwg4gsxgFZhOsEEamdOYGBf13FyQuiTwlAQgxVSNgt4="
-      crossorigin="anonymous">
-</script>
-<script src="/static/list.js"></script>
-<script>
+    <script src="https://code.jquery.com/jquery-3.2.1.min.js" integrity="sha256-hwg4gsxgFZhOsEEamdOYGBf13FyQuiTwlAQgxVSNgt4=" crossorigin="anonymous">
+    </script>
+    <script src="/static/list.js"></script>
+    <script>
     $(document).ready(function() {
         window.Superlists.initialize();
     });
-</script>
+    </script>
 </body>
+
 </html>
