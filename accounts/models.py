@@ -1,6 +1,10 @@
 from uuid import uuid4
 
 from django.db import models
+from django.contrib import auth
+
+
+auth.signals.user_logged_in.disconnect(auth.models.update_last_login)
 
 
 class User(models.Model):

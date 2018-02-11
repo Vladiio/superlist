@@ -1,6 +1,5 @@
 from django.test import TestCase
-from django.contrib.auth import get_user_model
-
+from django.contrib.auth import get_user_model, login
 
 from accounts.models import Token
 
@@ -21,6 +20,12 @@ class UserModelTest(TestCase):
         user = User.objects.create(email=self.email)
         self.assertEqual(user.pk, self.email)
 
+    def test_no_problem_with_auth_login(self):
+        user = User.objects.create(email=self.email)
+        user.backend = ''
+        request = self.client.request().wsgi_request
+        login(request, user) # shouldn't rise
+
 
 class TokenModelTest(TestCase):
 
@@ -28,4 +33,3 @@ class TokenModelTest(TestCase):
         token1 = Token.objects.create(email='test1@example.com')
         token2 = Token.objects.create(email='test2@example.com')
         self.assertNotEqual(token1.uid, token2.uid)
-
