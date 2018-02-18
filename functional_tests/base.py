@@ -25,9 +25,9 @@ class FunctionalTest(StaticLiveServerTestCase):
 
     def setUp(self):
         self.browser = webdriver.Firefox()
-        staging_server = os.environ.get('STAGING_SERVER')
-        if staging_server:
-            self.live_server_url = 'http://{}'.format(staging_server)
+        self.staging_server = os.environ.get('STAGING_SERVER')
+        if self.staging_server:
+            self.live_server_url = 'http://{}'.format(self.staging_server)
         self.first_item_row = 'Buy peacock feathers'
         self.second_item_row = 'Use peacock feathers to make a fly'
         self.MAX_WAIT = 10
