@@ -40,6 +40,7 @@ INSTALLED_APPS = [
      # Custom apps
     'lists',
     'accounts',
+    'functional_tests',
 ]
 
 MIDDLEWARE = [
