@@ -1,14 +1,16 @@
-from unittest import skip
-
 from django.test import TestCase
 from django.utils.html import escape
 from django.core.urlresolvers import reverse
+from django.contrib.auth import get_user_model
 
 from lists.models import Item, List
 from lists.forms import (
         ItemForm, EMPTY_ITEM_ERROR,
         ExistingListItemForm, DUPLICATE_ITEM_ERROR
 )
+
+
+User = get_user_model()
 
 
 class HomePageTest(TestCase):
@@ -119,6 +121,13 @@ class ListViewTest(TestCase):
 
 class NewListTest(TestCase):
 
+    def test_list_owner_is_saved_if_user_is_authenticated(self):
+        user = User.objects.create(email='me@example.com')
+        self.client.force_login(user)
+        self.client.post('/lists/new', data={'text': 'A new list item'})
+        list_ = List.objects.first()
+        self.assertEqual(list_.owner, user)
+
     def test_can_save_a_POST_request(self):
         self.client.post('/lists/new', data={'text': 'A new list item'})
 
@@ -153,10 +162,19 @@ class NewListTest(TestCase):
 
 class MyListsTest(TestCase):
 
+    def setUp(self):
+        self.email = 'edith@example.com'
+        self.user = User.objects.create(email=self.email)
+
     def request_get(self, *args, **kwargs):
-        url = reverse('my_lists')
+        url = reverse('my_lists', args=(self.email,))
         return self.client.get(url, *args, **kwargs)
 
     def test_renders_correct_template(self):
         response = self.request_get()
         self.assertTemplateUsed(response, 'my_lists.html')
+
+    def test_passes_correct_owner_to_template(self):
+        User.objects.create(email='someuser@example.com')
+        response = self.request_get()
+        self.assertEqual(response.context['owner'], self.user)
