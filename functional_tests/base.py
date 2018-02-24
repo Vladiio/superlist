@@ -4,6 +4,7 @@ import time
 from django.contrib.staticfiles.testing import StaticLiveServerTestCase
 
 from selenium import webdriver
+from selenium.webdriver.common.keys import Keys
 from selenium.common.exceptions import WebDriverException
 
 from .server_tools import reset_database
@@ -37,6 +38,16 @@ class FunctionalTest(StaticLiveServerTestCase):
 
     def tearDown(self):
         self.browser.quit()
+
+    def add_list_item(self, text):
+        items_count = len(
+            self.browser.find_elements_by_css_selector('#id_list_table tr')
+        )
+        self.get_item_input_box().send_keys(text)
+        self.get_item_input_box().send_keys(Keys.ENTER)
+
+        ordinal_number = items_count + 1
+        self.wait_for_row_in_list_table(f'{ordinal_number}: {text}')
 
     def get_item_input_box(self):
         return self.browser.find_element_by_id('id_text')
