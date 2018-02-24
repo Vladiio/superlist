@@ -2,6 +2,7 @@ from unittest import skip
 
 from django.test import TestCase
 from django.utils.html import escape
+from django.core.urlresolvers import reverse
 
 from lists.models import Item, List
 from lists.forms import (
@@ -148,3 +149,14 @@ class NewListTest(TestCase):
         self.client.post('/lists/new', data={'text': ''})
         self.assertEqual(List.objects.count(), 0)
         self.assertEqual(Item.objects.count(), 0)
+
+
+class MyListsTest(TestCase):
+
+    def request_get(self, *args, **kwargs):
+        url = reverse('my_lists')
+        return self.client.get(url, *args, **kwargs)
+
+    def test_renders_correct_template(self):
+        response = self.request_get()
+        self.assertTemplateUsed(response, 'my_lists.html')

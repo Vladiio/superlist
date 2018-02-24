@@ -30,3 +30,7 @@ def new_list(request):
         return redirect(list_)
 
     return render(request, 'home.html', {'form': item_form})
+
+
+def my_lists(request, user_email):
+    return render(request, 'my_lists.html', {})

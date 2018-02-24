@@ -38,7 +38,7 @@ class MyListsTest(FunctionalTest):
         # she notices a "My lists" link for the first time
         self.browser.find_element_by_link_text('My lists').click()
         # she sees her list here and it's named accordingly
-        #  to its first list item
+        # to its first list item
         self.wait_for(
             lambda: self.browser.find_element_by_link_text(self.first_item_row)
         )
