@@ -1,3 +1,5 @@
+from unittest.mock import patch
+
 from django.test import TestCase
 from django.utils.html import escape
 from django.core.urlresolvers import reverse
@@ -121,12 +123,16 @@ class ListViewTest(TestCase):
 
 class NewListTest(TestCase):
 
-    def test_list_owner_is_saved_if_user_is_authenticated(self):
+    @patch('lists.views.List')
+    @patch('lists.views.ItemForm')
+    def test_list_owner_is_saved_if_user_is_authenticated(
+        self, mockItemFormClass, mockListClass
+    ):
         user = User.objects.create(email='me@example.com')
         self.client.force_login(user)
         self.client.post('/lists/new', data={'text': 'A new list item'})
-        list_ = List.objects.first()
-        self.assertEqual(list_.owner, user)
+        mock_list = mockListClass.return_value
+        self.assertEqual(mock_list.owner, user)
 
     def test_can_save_a_POST_request(self):
         self.client.post('/lists/new', data={'text': 'A new list item'})
