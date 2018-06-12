@@ -1,0 +1,10 @@
+{
+  "accounts/tests/test_authentication.py": true,
+  "accounts/tests/test_models.py": true,
+  "accounts/tests/test_views.py": true,
+  "functional_tests/test_list_item_validation.py": true,
+  "functional_tests/test_my_lists.py": true,
+  "lists/tests/test_forms.py": true,
+  "lists/tests/test_models.py": true,
+  "lists/tests/test_views.py": true
+}

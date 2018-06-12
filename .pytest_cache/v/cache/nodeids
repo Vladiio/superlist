@@ -1,0 +1,6 @@
+[
+  "functional_tests/test_layout_and_styling.py::LayoutAndStylingTest::test_layout_and_styling",
+  "functional_tests/test_login.py::LoginTest::test_can_get_email_link_to_log_in",
+  "functional_tests/test_simple_test_creation.py::NewVisitorTest::test_can_start_a_list_for_one_user",
+  "functional_tests/test_simple_test_creation.py::NewVisitorTest::test_multiple_users_can_start_lists_at_different_urls"
+]
