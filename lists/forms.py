@@ -8,6 +8,10 @@ EMPTY_ITEM_ERROR = 'You can\'t have an empty list item'
 DUPLICATE_ITEM_ERROR = 'You\'ve already got this in your list'
 
 
+class NewListForm:
+    pass
+
+
 class ItemForm(forms.ModelForm):
 
     class Meta:

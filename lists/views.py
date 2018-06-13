@@ -2,7 +2,7 @@ from django.shortcuts import render, redirect
 from django.contrib.auth import get_user_model
 
 from lists.models import List
-from lists.forms import ItemForm, ExistingListItemForm
+from lists.forms import ItemForm, ExistingListItemForm, NewListForm
 
 
 User = get_user_model()
@@ -23,6 +23,14 @@ def view_list(request, list_id):
             return redirect(list_)
 
     return render(request, 'list.html', {'list': list_, 'form': item_form})
+
+
+def new_list2(request):
+    new_list_form = NewListForm(data=request.POST)
+    if new_list_form.is_valid:
+        new_list = new_list_form.save(owner=request.user)
+        return redirect(new_list)
+    return render(request, 'home.html', {'form': new_list_form })
 
 
 def new_list(request):
