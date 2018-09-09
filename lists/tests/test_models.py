@@ -6,6 +6,9 @@ from lists.models import Item, List
 
 User = get_user_model()
 
+User = get_user_model()
+
+
 class ItemModelTest(TestCase):
 
     def test_default_text(self):
@@ -58,7 +61,6 @@ class ItemModelTest(TestCase):
 
 
 class ListModelTest(TestCase):
-
 
     def test_get_absolute_url(self):
         new_list = List.objects.create()
