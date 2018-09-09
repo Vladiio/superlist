@@ -8,19 +8,19 @@ EMPTY_ITEM_ERROR = 'You can\'t have an empty list item'
 DUPLICATE_ITEM_ERROR = 'You\'ve already got this in your list'
 
 
-class NewListForm(forms.ModelForm):
-    text = forms.CharField()
-
-    class Meta:
-        model = List
-        fields = '__all__'
-
-    def save(self, owner=None):
-        list = super().save()
-        item = Item(text=self.cleaned_data['text'])
-        item.save()
-        # if owner:
-        #   self.instance.owner = owner
+# class NewListForm(forms.ModelForm):
+#     text = forms.CharField()
+# 
+#     class Meta:
+#         model = List
+#         fields = '__all__'
+# 
+#     def save(self, owner=None):
+#         list = super().save()
+#         item = Item(text=self.cleaned_data['text'])
+#         item.save()
+#         # if owner:
+#         #   self.instance.owner = owner
 
 
 class ItemForm(forms.ModelForm):
@@ -41,6 +41,15 @@ class ItemForm(forms.ModelForm):
     def save(self, for_list, **kwargs):
         self.instance.list = for_list
         return super().save(**kwargs)
+
+class NewListForm(ItemForm):
+
+    def save(self, owner):
+        first_item_text = self.cleaned_data['text']
+        if owner.is_authenticated:
+            return List.create_new(first_item_text=first_item_text, owner=owner)
+        else:
+            return List.create_new(first_item_text=first_item_text)
 
 
 class ExistingListItemForm(ItemForm):

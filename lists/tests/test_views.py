@@ -147,7 +147,7 @@ class NewListViewUnitTest(unittest.TestCase):
             self, mockRedirect, mockNewListForm
     ):
         mock_form = mockNewListForm.return_value
-        mock_form.is_valid = True
+        mock_form.is_valid.return_value = True
 
         response = new_list2(self.request)
         self.assertEqual(response, mockRedirect.return_value)
@@ -158,7 +158,7 @@ class NewListViewUnitTest(unittest.TestCase):
             self, mockRender, mockNewListForm
     ):
         mock_form = mockNewListForm.return_value
-        mock_form.is_valid = False
+        mock_form.is_valid.return_value = False
         response = new_list2(self.request)
         self.assertEqual(response, mockRender.return_value)
         mockRender.assert_called_once_with(
@@ -167,7 +167,7 @@ class NewListViewUnitTest(unittest.TestCase):
 
     def test_does_not_save_form_if_one_invalid(self, mockNewListForm):
         mock_form = mockNewListForm.return_value
-        mock_form.is_valid = False
+        mock_form.is_valid.return_value = False
         new_list2(self.request)
         self.assertFalse(mock_form.save.called)
 

@@ -27,7 +27,7 @@ def view_list(request, list_id):
 
 def new_list2(request):
     new_list_form = NewListForm(data=request.POST)
-    if new_list_form.is_valid:
+    if new_list_form.is_valid():
         new_list = new_list_form.save(owner=request.user)
         return redirect(new_list)
     return render(request, 'home.html', {'form': new_list_form })
@@ -38,7 +38,8 @@ def new_list(request):
 
     if item_form.is_valid():
         list_ = List()
-        list_.owner = request.user
+        if request.user.is_authenticated:
+            list_.owner = request.user
         list_.save()
         item_form.save(list_)
         return redirect(list_)
