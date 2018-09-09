@@ -8,21 +8,6 @@ EMPTY_ITEM_ERROR = 'You can\'t have an empty list item'
 DUPLICATE_ITEM_ERROR = 'You\'ve already got this in your list'
 
 
-# class NewListForm(forms.ModelForm):
-#     text = forms.CharField()
-# 
-#     class Meta:
-#         model = List
-#         fields = '__all__'
-# 
-#     def save(self, owner=None):
-#         list = super().save()
-#         item = Item(text=self.cleaned_data['text'])
-#         item.save()
-#         # if owner:
-#         #   self.instance.owner = owner
-
-
 class ItemForm(forms.ModelForm):
 
     class Meta:
@@ -38,9 +23,6 @@ class ItemForm(forms.ModelForm):
             'text': {'required': EMPTY_ITEM_ERROR}
         }
 
-    def save(self, for_list, **kwargs):
-        self.instance.list = for_list
-        return super().save(**kwargs)
 
 class NewListForm(ItemForm):
 
@@ -64,6 +46,3 @@ class ExistingListItemForm(ItemForm):
         except ValidationError as e:
             e.error_dict = {'text': [DUPLICATE_ITEM_ERROR]}
             self._update_errors(e)
-
-    def save(self):
-        return forms.models.ModelForm.save(self)

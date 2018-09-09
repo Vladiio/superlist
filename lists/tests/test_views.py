@@ -12,7 +12,7 @@ from lists.forms import (
         ItemForm, EMPTY_ITEM_ERROR,
         ExistingListItemForm, DUPLICATE_ITEM_ERROR
 )
-from lists.views import new_list2
+from lists.views import new_list
 
 
 User = get_user_model()
@@ -133,13 +133,13 @@ class NewListViewUnitTest(unittest.TestCase):
         self.request.user = Mock()
 
     def test_passes_POST_data_to_NewListForm(self, mockNewListForm):
-        new_list2(self.request)
+        new_list(self.request)
         mockNewListForm.assert_called_once_with(data=self.request.POST)
 
     def test_saves_form_with_owner_if_form_valid(self, mockNewListForm):
         new_list_form = mockNewListForm.return_value
         new_list_form.is_valid.return_value = True
-        new_list2(self.request)
+        new_list(self.request)
         new_list_form.save.assert_called_once_with(owner=self.request.user)
 
     @patch('lists.views.redirect')
@@ -149,7 +149,7 @@ class NewListViewUnitTest(unittest.TestCase):
         mock_form = mockNewListForm.return_value
         mock_form.is_valid.return_value = True
 
-        response = new_list2(self.request)
+        response = new_list(self.request)
         self.assertEqual(response, mockRedirect.return_value)
         mockRedirect.assert_called_once_with(mock_form.save.return_value)
 
@@ -159,7 +159,7 @@ class NewListViewUnitTest(unittest.TestCase):
     ):
         mock_form = mockNewListForm.return_value
         mock_form.is_valid.return_value = False
-        response = new_list2(self.request)
+        response = new_list(self.request)
         self.assertEqual(response, mockRender.return_value)
         mockRender.assert_called_once_with(
                 self.request, 'home.html', {'form': mock_form }
@@ -168,7 +168,7 @@ class NewListViewUnitTest(unittest.TestCase):
     def test_does_not_save_form_if_one_invalid(self, mockNewListForm):
         mock_form = mockNewListForm.return_value
         mock_form.is_valid.return_value = False
-        new_list2(self.request)
+        new_list(self.request)
         self.assertFalse(mock_form.save.called)
 
 
