@@ -67,7 +67,7 @@ class ItemValidationTest(FunctionalTest):
             self.get_error_element().is_displayed()
         ))
 
-        self.get_item_input_box().send_keys('a')
-        self.wait_for(lambda: self.assertFalse(
-            self.get_error_element().is_displayed()
-        ))
+        # self.get_item_input_box().send_keys('a')
+        # self.wait_for(lambda: self.assertFalse(
+        #     self.get_error_element().is_displayed()
+        # ))
