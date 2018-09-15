@@ -7,3 +7,4 @@ __pycache__
 tags
 .idea/
 .env
+functional_tests/screendumps

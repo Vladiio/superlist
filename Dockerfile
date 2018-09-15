@@ -8,6 +8,8 @@ RUN echo "http://nl.alpinelinux.org/alpine/edge/main" >> /etc/apk/repositories &
 
 RUN apk update && apk upgrade && apk add python3 python3-dev gcc firefox xvfb dbus
 
+RUN export DISPLAY=:0.0
+
 WORKDIR /var/jenkins_home/
 
 RUN wget \
