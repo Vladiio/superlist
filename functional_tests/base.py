@@ -17,7 +17,7 @@ SCREEN_DUMP_LOCATION = os.path.join(
 
 def wait(func):
     def wrapper(*args, **kwargs):
-        max_wait = 20
+        max_wait = 10
         start_time = time.time()
         while True:
             try:

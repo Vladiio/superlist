@@ -1,6 +1,6 @@
 {% extends 'base.html' %}
 
-{% block header_text %}Your To-Do list {% endblock %}
+{% block header_text %}Your To-Do list <p id="list_owner">{{ list.owner.email}}</p>{% endblock %}
 
 {% block form_action %}{% url 'view_list' list.id %}{% endblock %}
 
@@ -10,4 +10,22 @@
         <tr><td>{{ forloop.counter }}: {{ item.text }}</td></tr>
     {% endfor %}
 </table>
+{% endblock %}
+
+{% block extra_content %}
+<div style="float: left">
+    <form method="post" action="/lists/{{ list.id }}/share/">
+        {% csrf_token %}
+        <input name="share" placeholder="your-friend@example.com" />
+    </form>
+</div>
+<div style="float: left; margin-left: 20px">
+    <h2 style="margin: 0">Shared with</h2>
+    <ul>
+    {% for user in list.shared_with.all %}
+    <li class="list-share">{{ user.email }}</li>
+    {% endfor %}
+    </ul>
+</div>
+
 {% endblock %}

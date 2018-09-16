@@ -1,11 +1,25 @@
 import unittest
 from django.test import TestCase
+from django.contrib.auth import get_user_model
 
 from lists.forms import (
     ItemForm, EMPTY_ITEM_ERROR,
-    ExistingListItemForm, DUPLICATE_ITEM_ERROR, NewListForm
+    ExistingListItemForm, DUPLICATE_ITEM_ERROR, NewListForm, SharedWithForm
 )
 from lists.models import List, Item
+
+User = get_user_model()
+
+class ShareWithFromTest(unittest.TestCase):
+
+    def test_save_adds_user_to_item_shared_with(self):
+        user = User.objects.create(email='test@example.com')
+        list_ = List.objects.create()
+        form = SharedWithForm(data={'share': 'test@example.com'})
+        form.is_valid()
+        form.save(list_=list_)
+        self.assertIn(user, list_.shared_with.all())
+
 
 
 class NewListFormTest(unittest.TestCase):

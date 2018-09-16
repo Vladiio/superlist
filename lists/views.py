@@ -2,10 +2,18 @@ from django.shortcuts import render, redirect
 from django.contrib.auth import get_user_model
 
 from lists.models import List
-from lists.forms import ItemForm, ExistingListItemForm, NewListForm
+from lists.forms import ItemForm, ExistingListItemForm, NewListForm, SharedWithForm
 
 
 User = get_user_model()
+
+
+def share_list(request, list_id):
+    list_ = List.objects.get(id=list_id)
+    form = SharedWithForm(data=request.POST)
+    if form.is_valid():
+        form.save(list_=list_)
+    return redirect(list_)
 
 
 def home_page(request):

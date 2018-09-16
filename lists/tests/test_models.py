@@ -6,10 +6,16 @@ from lists.models import Item, List
 
 User = get_user_model()
 
-User = get_user_model()
-
 
 class ItemModelTest(TestCase):
+
+    def test_can_use_shared_with_attribute_to_add_emails(self):
+        email = 'test@example.com'
+        user = User.objects.create(email=email)
+        list_ = List.objects.create()
+        list_.shared_with.add(email)
+        self.assertIn(user, list_.shared_with.all())
+
 
     def test_default_text(self):
         item = Item()

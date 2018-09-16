@@ -12,10 +12,28 @@ from lists.forms import (
         ItemForm, EMPTY_ITEM_ERROR,
         ExistingListItemForm, DUPLICATE_ITEM_ERROR
 )
-from lists.views import new_list
+from lists.views import new_list, share_list
 
 
 User = get_user_model()
+
+
+class ListShareTest(TestCase):
+
+    def setUp(self):
+        self.request = HttpRequest()
+
+    def test_post_redicrects_to_lists_page(self):
+        list_ = List.objects.create()
+        response = self.client.post(f'/lists/{list_.id}/share/')
+        self.assertRedirects(response, f'/lists/{list_.id}/')
+
+    def test_post_adds_user_to_list_shared_with(self):
+        user = User.objects.create(email="test@example.com")
+        list_ = List.objects.create()
+        self.client.post(f'/lists/{list_.id}/share/', data={'share': user.email})
+        self.assertIn(user, list_.shared_with.all())
+
 
 
 class HomePageTest(TestCase):
@@ -232,3 +250,4 @@ class MyListsTest(TestCase):
         User.objects.create(email='someuser@example.com')
         response = self.request_get()
         self.assertEqual(response.context['owner'], self.user)
+

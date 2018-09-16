@@ -1,11 +1,24 @@
 from django import forms
 from django.core.exceptions import ValidationError
+from django.contrib.auth import get_user_model
 
 from lists.models import Item, List
+
+User = get_user_model()
 
 EMPTY_ITEM_ERROR = 'You can\'t have an empty list item'
 
 DUPLICATE_ITEM_ERROR = 'You\'ve already got this in your list'
+
+
+class SharedWithForm(forms.Form):
+    share = forms.EmailField()
+
+    def save(self, list_):
+        email = self.cleaned_data['share']
+        share_to = User.objects.get(email=email)
+        list_.shared_with.add(share_to)
+        return list_
 
 
 class ItemForm(forms.ModelForm):

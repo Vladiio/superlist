@@ -40,3 +40,7 @@ class ListPage:
             [item.text for item in self.get_shared_with_list()]
         ))
 
+    def get_list_owner(self):
+       return self.test.browser.find_element_by_id('list_owner').text
+
+

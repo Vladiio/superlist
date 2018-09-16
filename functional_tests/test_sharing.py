@@ -6,20 +6,24 @@ from .my_lists_page import MyListsPage
 
 
 def quit_if_possible(browser):
-    try: browser.quite()
+    try: browser.quit()
     except: pass
 
 
 class SharingTest(FunctionalTest):
     def test_can_share_a_list_with_another_user(self):
         # Edith is a logged in user
-        self.create_pre_authenticated_session('edith.example.com')
+        self.create_pre_authenticated_session('edith@example.com')
         edith_browser = self.browser
-        self.addCleanup(lambda: quit_if_possible(edith_browser))
 
         # her friend is also hanging out on the lists site
         oni_browser = webdriver.Firefox()
-        self.addCleanup(lambda: quit_if_possible(oni_browser))
+
+        def clean_up():
+            quit_if_possible(edith_browser)
+            quit_if_possible(oni_browser)
+
+        self.addCleanup(clean_up)
         self.browser = oni_browser
         self.create_pre_authenticated_session('oni@example.com')
 
@@ -35,7 +39,7 @@ class SharingTest(FunctionalTest):
 
         # Oni now goes to the lists page with his browser
         self.browser = oni_browser
-        MyListsPage(self).get_to_my_lists_page()
+        MyListsPage(self).go_to_my_lists_page()
         # He sees Edith list in here
         self.browser.find_element_by_link_text('Get help').click()
         self.wait_for(lambda: self.assertEqual(
